@@ -152,3 +152,22 @@ LEFT OUTER JOIN
 ) AS tmp 
 ON tmp.t_id = union_r_t.id 
 ;
+
+-- ☆別解答ver☆
+-- クエリ2  (replys_users)
+/* リプライを取得　投稿したユーザー名を表示 */
+SELECT IFNULL(r.reply, "") AS "ツイート" , IFNULL(u.id, "") AS "ユーザーID", IFNULL(u.first_name, "") AS "名", IFNULL(u.last_name, "") AS "氏", tmp.tweet AS "ツイート元", tmp.u_id AS "ユーザーID", tmp.first_name AS "名", tmp.last_name AS "氏" 
+FROM replys AS r
+RIGHT OUTER JOIN 
+    -- クエリ1　（tweets_users) tmp
+    /* ツイートを取得　投稿したユーザー名を表示 */
+    (
+    SELECT t.id AS t_id, t.tweet, u.id AS u_id, u.first_name, u.last_name
+    FROM tweets AS t
+    LEFT OUTER JOIN users AS u 
+    ON t.user_id = u.id
+    ) tmp
+
+ON  r.tweet_id = tmp.t_id 
+LEFT OUTER JOIN users AS u 
+ON r.user_id = u.id 
